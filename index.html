@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Junior Games</title>
+  <style>
+    /* Réinitialisation des styles par défaut pour une mise en page cohérente */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', Arial, sans-serif;
+    }
+
+    /* Style du corps de la page avec un dégradé de fond */
+    body {
+      background: linear-gradient(135deg, #00B4DB, #0083B0);
+      text-align: center;
+      color: #fff;
+    }
+
+    /* En-tête avec un fond bleu et une ombre */
+    header {
+      background-color: #0095DD;
+      color: white;
+      padding: 20px;
+      font-size: 30px;
+      font-weight: bold;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+      letter-spacing: 1px;
+    }
+
+    /* Style des boutons avec effet de survol */
+    button {
+      background-color: #0095DD;
+      color: white;
+      border: none;
+      padding: 20px 50px;
+      font-size: 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 60px;
+    }
+
+    button:hover {
+      background-color: #007bb5;
+      transform: scale(1.08);
+    }
+
+    /* Style du canvas pour le jeu */
+    canvas {
+      background: #eee;
+      display: block;
+      margin: 40px auto;
+      border: 3px solid #0095DD;
+      border-radius: 10px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+
+    /* Style du compte à rebours avec animation */
+    #countdown {
+      font-size: 60px;
+      font-weight: bold;
+      color: #fff;
+      margin-top: 30px;
+      display: none;
+      animation: fadeInOut 1s ease-in-out infinite;
+    }
+
+    /* Animation pour le compte à rebours */
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0; transform: scale(0.8); }
+    }
+
+    /* Style du message de fin */
+    #endMessage {
+      font-size: 28px;
+      color: #fff;
+      margin-top: 20px;
+      font-weight: bold;
+      display: none;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    }
+
+    /* Style du bouton de recommencement */
+    #restartBtn {
+      display: none;
+      margin-top: 20px;
+      background-color: #FF5722;
+    }
+
+    #restartBtn:hover {
+      background-color: #E64A19;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- En-tête du jeu -->
+  <header>Junior Games</header>
+  
+  <!-- Bouton pour démarrer le jeu -->
+  <button id="startBtn">Commencer</button>
+  <!-- Élément pour afficher le compte à rebours -->
+  <div id="countdown"></div>
+  <!-- Canvas pour le rendu du jeu -->
+  <canvas id="myCanvas" width="480" height="320" style="display:none;"></canvas>
+  <!-- Message affiché à la fin du jeu -->
+  <div id="endMessage"></div>
+  <!-- Bouton pour recommencer le jeu -->
+  <button id="restartBtn">Recommencer</button>
+
+  <script>
+    // Récupération des éléments HTML
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d"); // Contexte 2D pour dessiner
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const endMessage = document.getElementById("endMessage");
+    const countdownEl = document.getElementById("countdown");
+
+    // Variables du jeu
+    let ballRadius, x, y, dx, dy, paddleHeight, paddleWidth, paddleX;
+    let rightPressed, leftPressed;
+    let brickRowCount, brickColumnCount, brickWidth, brickHeight;
+    let brickPadding, brickOffsetTop, brickOffsetLeft;
+    let score, lives, gameRunning, bricks;
+
+    // Initialisation des variables du jeu
+    function initGame() {
+      ballRadius = 10; // Rayon de la balle
+      x = canvas.width / 2; // Position initiale x de la balle
+      y = canvas.height - 30; // Position initiale y de la balle
+      dx = 2; // Vitesse horizontale
+      dy = -2; // Vitesse verticale
+      paddleHeight = 10; // Hauteur de la raquette
+      paddleWidth = 75; // Largeur de la raquette
+      paddleX = (canvas.width - paddleWidth) / 2; // Position initiale de la raquette
+      rightPressed = false; // État touche droite
+      leftPressed = false; // État touche gauche
+      brickRowCount = 5; // Nombre de colonnes de briques
+      brickColumnCount = 3; // Nombre de lignes de briques
+      brickWidth = 75; // Largeur d'une brique
+      brickHeight = 20; // Hauteur d'une brique
+      brickPadding = 10; // Espacement entre briques
+      brickOffsetTop = 30; // Décalage haut des briques
+      brickOffsetLeft = 30; // Décalage gauche des briques
+      score = 0; // Score initial
+      lives = 3; // Nombre de vies
+      gameRunning = true; // État du jeu
+
+      // Initialisation du tableau de briques
+      bricks = [];
+      for (let c = 0; c < brickColumnCount; c++) {
+        bricks[c] = [];
+        for (let r = 0; r < brickRowCount; r++) {
+          bricks[c][r] = { x: 0, y: 0, status: 1 }; // Status 1 = brique active
+        }
+      }
+
+      // Réinitialisation des éléments d'interface
+      endMessage.style.display = "none";
+      restartBtn.style.display = "none";
+    }
+
+    // Gestion des événements clavier et souris
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+    document.addEventListener("mousemove", mouseMoveHandler, false);
+
+    // Détection des touches pressées
+    function keyDownHandler(e) {
+      if (e.code == "ArrowRight") rightPressed = true;
+      else if (e.code == "ArrowLeft") leftPressed = true;
+    }
+
+    // Détection des touches relâchées
+    function keyUpHandler(e) {
+      if (e.code == "ArrowRight") rightPressed = false;
+      else if (e.code == "ArrowLeft") leftPressed = false;
+    }
+
+    // Déplacement de la raquette avec la souris
+    function mouseMoveHandler(e) {
+      const relativeX = e.clientX - canvas.offsetLeft;
+      if (relativeX > 0 && relativeX < canvas.width) {
+        paddleX = relativeX - paddleWidth / 2;
+      }
+    }
+
+    // Détection des collisions avec les briques
+    function collisionDetection() {
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          const b = bricks[c][r];
+          if (b.status == 1) {
+            if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+              dy = -dy; // Inverser la direction verticale
+              b.status = 0; // Désactiver la brique
+              score++; // Augmenter le score
+              if (score == brickRowCount * brickColumnCount) {
+                endMessage.textContent = "🎉 Bravo, tu as gagné !";
+                endGame(); // Fin du jeu
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Dessiner la balle
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+      ctx.fillStyle = "#0095DD";
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Dessiner la raquette
+    function drawPaddle() {
+      ctx.beginPath();
+      ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+      ctx.fillStyle = "#0095DD";
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // Dessiner les briques
+    function drawBricks() {
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          if (bricks[c][r].status == 1) {
+            const brickX = (r * (brickWidth + brickPadding)) + brickOffsetLeft;
+            const brickY = (c * (brickHeight + brickPadding)) + brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+          }
+        }
+      }
+    }
+
+    // Afficher le score
+    function drawScore() {
+      ctx.font = "16px Arial";
+      ctx.fillStyle = "#0095DD";
+      ctx.fillText("Score : " + score, 8, 20);
+    }
+
+    // Afficher les vies
+    function drawLives() {
+      ctx.font = "16px Arial";
+      ctx.fillStyle = "#0095DD";
+      ctx.fillText("Vies : " + lives, canvas.width - 65, 20);
+    }
+
+    // Boucle principale du jeu
+    function draw() {
+      if (!gameRunning) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
+      drawBricks();
+      drawBall();
+      drawPaddle();
+      drawScore();
+      drawLives();
+      collisionDetection();
+
+      // Gestion des collisions avec les murs
+      if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) dx = -dx;
+      if (y + dy < ballRadius) dy = -dy;
+      else if (y + dy > canvas.height - ballRadius) {
+        if (x > paddleX && x < paddleX + paddleWidth) dy = -dy; // Rebond sur la raquette
+        else {
+          lives--; // Perdre une vie
+          if (!lives) {
+            endMessage.textContent = "💀 Partie terminée !";
+            endGame();
+          } else {
+            x = canvas.width / 2;
+            y = canvas.height - 30;
+            dx = 2;
+            dy = -2;
+            paddleX = (canvas.width - paddleWidth) / 2;
+          }
+        }
+      }
+
+      // Déplacement de la raquette
+      if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 7;
+      else if (leftPressed && paddleX > 0) paddleX -= 7;
+
+      // Mise à jour de la position de la balle
+      x += dx;
+      y += dy;
+      requestAnimationFrame(draw); // Boucle d'animation
+    }
+
+    // Fin du jeu
+    function endGame() {
+      gameRunning = false;
+      endMessage.style.display = "block";
+      restartBtn.style.display = "inline-block";
+    }
+
+    // Compte à rebours avant le démarrage
+    function startCountdown(callback) {
+      let count = 3;
+      countdownEl.style.display = "block";
+      countdownEl.textContent = count;
+
+      const interval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdownEl.textContent = count;
+        } else if (count === 0) {
+          countdownEl.textContent = "Go !";
+        } else {
+          clearInterval(interval);
+          countdownEl.style.display = "none";
+          callback();
+        }
+      }, 1000);
+    }
+
+    // Événement pour démarrer le jeu
+    startBtn.addEventListener("click", () => {
+      startBtn.style.display = "none";
+      canvas.style.display = "block";
+      startCountdown(() => {
+        initGame();
+        draw();
+      });
+    });
+
+    // Événement pour recommencer
+    restartBtn.addEventListener("click", () => {
+      initGame();
+      draw();
+    });
+  </script>
+</body>
+</html>
