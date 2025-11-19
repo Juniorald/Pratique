@@ -1,350 +1,458 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <title>Junior Games</title>
-  <style>
-    /* Réinitialisation des styles par défaut pour une mise en page cohérente */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', Arial, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Mamadou Diga Ba | Expert Digital</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    /* Style du corps de la page avec un dégradé de fond */
-    body {
-      background: linear-gradient(135deg, #00B4DB, #0083B0);
-      text-align: center;
-      color: #fff;
-    }
+    <style>
+        :root {
+            /* Couleurs & Variables */
+            --primary: #2563eb;       /* Bleu Action */
+            --secondary: #0f172a;     /* Noir/Bleu Profond */
+            --accent: #06b6d4;        /* Cyan Data */
+            --bg-page: #f8fafc;       /* Gris très pâle */
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+            
+            --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.08);
+            --shadow-hover: 0 25px 50px -12px rgba(0,0,0,0.15);
+        }
 
-    /* En-tête avec un fond bleu et une ombre */
-    header {
-      background-color: #0095DD;
-      color: white;
-      padding: 20px;
-      font-size: 30px;
-      font-weight: bold;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-      letter-spacing: 1px;
-    }
+        * { box-sizing: border-box; }
 
-    /* Style des boutons avec effet de survol */
-    button {
-      background-color: #0095DD;
-      color: white;
-      border: none;
-      padding: 20px 50px;
-      font-size: 24px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-top: 60px;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 0;
+            line-height: 1.65;
+            font-size: 14px;
+            overflow-x: hidden;
+        }
 
-    button:hover {
-      background-color: #007bb5;
-      transform: scale(1.08);
-    }
+        /* LAYOUT - Colonne Droite élargie à 340px pour l'email */
+        .cv-wrapper {
+            max-width: 215mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 340px; 
+            gap: 25px;
+            padding: 0 20px;
+        }
 
-    /* Style du canvas pour le jeu */
-    canvas {
-      background: #eee;
-      display: block;
-      margin: 40px auto;
-      border: 3px solid #0095DD;
-      border-radius: 10px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-    }
+        /* --- HEADER --- */
+        .header-card {
+            grid-column: 1 / -1;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            position: relative;
+            overflow: hidden;
+            border-left: 6px solid var(--primary);
+            /* Suppression de la perspective pour la rotation */
+        }
 
-    /* Style du compte à rebours avec animation */
-    #countdown {
-      font-size: 60px;
-      font-weight: bold;
-      color: #fff;
-      margin-top: 30px;
-      display: none;
-      animation: fadeInOut 1s ease-in-out infinite;
-    }
+        .header-bg {
+            position: absolute; top: -50%; right: -10%; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.05) 0%, transparent 70%);
+            z-index: 0; pointer-events: none;
+        }
 
-    /* Animation pour le compte à rebours */
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: scale(0.8); }
-      50% { opacity: 1; transform: scale(1.2); }
-      100% { opacity: 0; transform: scale(0.8); }
-    }
+        .profile-container {
+            position: relative; z-index: 1;
+            /* Suppression de la transition pour la rotation */
+        }
 
-    /* Style du message de fin */
-    #endMessage {
-      font-size: 28px;
-      color: #fff;
-      margin-top: 20px;
-      font-weight: bold;
-      display: none;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-    }
+        /* AMÉLIORATION VISUELLE DE LA PHOTO */
+        .profile-img {
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary); /* Bordure unie et visible */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2), /* Ombre plus marquée */
+                        0 0 0 8px rgba(37, 99, 235, 0.1); /* Halo lumineux subtil */
+            transition: transform 0.3s ease;
+        }
+        .header-card:hover .profile-img { transform: scale(1.03); } /* Effet léger au survol */
 
-    /* Style du bouton de recommencement */
-    #restartBtn {
-      display: none;
-      margin-top: 20px;
-      background-color: #FF5722;
-    }
 
-    #restartBtn:hover {
-      background-color: #E64A19;
-    }
-  </style>
+        .header-info { position: relative; z-index: 1; flex: 1; }
+
+        .header-info h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 36px; font-weight: 800; color: var(--secondary);
+            margin: 0; line-height: 1.1; letter-spacing: -0.5px;
+        }
+
+        .typing-wrapper {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px; color: var(--primary); font-weight: 700;
+            margin: 5px 0 15px 0; text-transform: uppercase; letter-spacing: 0.5px;
+            height: 24px; display: flex; align-items: center; white-space: nowrap;
+        }
+        .cursor {
+            display: inline-block; width: 2px; height: 20px; background: var(--primary);
+            margin-left: 5px; animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .summary-text { font-size: 1em; color: var(--text-light); max-width: 650px; }
+
+        /* --- COLONNES --- */
+        .col-left, .col-right { display: flex; flex-direction: column; gap: 25px; }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0; transform: translateY(30px);
+        }
+        
+        .card.visible { opacity: 1; transform: translateY(0); }
+        .card:hover { transform: translateY(-5px) !important; box-shadow: var(--shadow-hover); }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1em; text-transform: uppercase; letter-spacing: 1px;
+            font-weight: 700; color: var(--secondary); margin-bottom: 30px;
+            display: flex; align-items: center; gap: 12px;
+            padding-bottom: 15px; border-bottom: 2px solid #f1f5f9;
+        }
+        .section-title i { color: var(--primary); background: rgba(37, 99, 235, 0.1); padding: 8px; border-radius: 8px; }
+
+        /* EXPÉRIENCES */
+        .timeline-item {
+            position: relative; padding-left: 35px; margin-bottom: 40px;
+            border-left: 2px solid #e2e8f0;
+        }
+        .timeline-item:last-child { margin-bottom: 0; border-left-color: transparent; }
+
+        .timeline-dot {
+            position: absolute; left: -8px; top: 0;
+            width: 14px; height: 14px; border-radius: 50%;
+            background: white; border: 3px solid var(--primary);
+            transition: transform 0.3s ease, background-color 0.3s;
+        }
+        .timeline-item:hover .timeline-dot { background: var(--primary); transform: scale(1.3); }
+
+        .job-head {
+            display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .job-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; color: var(--secondary); }
+        .job-company { color: var(--primary); font-weight: 600; font-size: 0.95em; }
+        .job-date { font-size: 0.85em; color: var(--text-light); background: #f1f5f9; padding: 4px 12px; border-radius: 6px; font-weight: 600; }
+
+        .job-desc li {
+            position: relative; padding-left: 22px; margin-bottom: 8px;
+            font-size: 0.95em; color: var(--text-main); list-style: none;
+        }
+        .job-desc li::before {
+            content: "➜"; position: absolute; left: 0; color: var(--accent); font-size: 0.9em; top: 3px;
+        }
+
+        /* EDUCATION */
+        .edu-item { margin-bottom: 20px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 20px; }
+        .edu-item:last-child { border: none; padding-bottom: 0; margin-bottom: 0; }
+        .edu-degree { font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--secondary); display: block; margin-bottom: 4px; }
+        .edu-school { color: var(--primary); font-size: 0.95em; }
+
+        /* CONTACT OPTIMISÉ */
+        .contact-row {
+            display: flex; gap: 12px; margin-bottom: 12px;
+            font-size: 0.9em; color: var(--text-main); padding: 12px;
+            background: #f8fafc; border-radius: 10px; transition: 0.3s; cursor: pointer;
+            align-items: center;
+            white-space: nowrap; 
+            overflow: hidden;
+        }
+        .contact-row:hover { background: var(--primary); color: white; transform: translateX(5px); }
+        .contact-row i { color: var(--primary); width: 20px; text-align: center; flex-shrink: 0; }
+        .contact-row:hover i { color: white; }
+        
+        .contact-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* TAGS */
+        .skill-group { margin-bottom: 25px; }
+        .skill-label {
+            font-size: 0.85em; text-transform: uppercase; color: var(--text-light);
+            font-weight: 700; margin-bottom: 10px; display: block; letter-spacing: 0.5px;
+        }
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag {
+            font-size: 0.85em; padding: 6px 12px; border-radius: 6px;
+            background: #f1f5f9; color: var(--text-main); font-weight: 600;
+            border: 1px solid #e2e8f0; transition: 0.2s; cursor: default;
+            white-space: nowrap;
+            opacity: 0; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .tag.tech { color: var(--primary); background: rgba(37, 99, 235, 0.05); border-color: rgba(37, 99, 235, 0.1); }
+        .tag:hover { transform: translateY(-3px); border-color: var(--primary); background: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+        /* SOFT SKILLS */
+        .soft-skill {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+            font-size: 0.95em; font-weight: 500; opacity: 0;
+            animation: slideRight 0.5s ease forwards;
+        }
+        .soft-skill i { color: #10b981; }
+        @keyframes slideRight { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* TOAST */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
+            text-align: center; border-radius: 50px; padding: 16px; position: fixed;
+            z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%);
+            font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            opacity: 0; transition: opacity 0.5s, bottom 0.5s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+
+        /* PRINT BUTTON */
+        .fab {
+            position: fixed; bottom: 40px; right: 40px;
+            background: var(--secondary); color: white;
+            padding: 15px 25px; border-radius: 50px; font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); cursor: pointer;
+            display: flex; align-items: center; gap: 10px; z-index: 1000; transition: 0.3s;
+        }
+        .fab:hover { transform: translateY(-5px); background: var(--primary); }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .cv-wrapper { width: 100%; max-width: 100%; margin: 0; box-shadow: none; gap: 20px; }
+            .card, .header-card { box-shadow: none; border: 1px solid #eee; break-inside: avoid; opacity: 1 !important; transform: none !important; }
+            .fab, #toast { display: none; }
+            .tag { border: 1px solid #ccc !important; opacity: 1 !important; animation: none !important; }
+            .contact-row { white-space: normal; } /* Permettre le retour à la ligne à l'impression si besoin */
+        }
+    </style>
 </head>
-
 <body>
-  <!-- En-tête du jeu -->
-  <header>Junior Games</header>
-  
-  <!-- Bouton pour démarrer le jeu -->
-  <button id="startBtn">Commencer</button>
-  <!-- Élément pour afficher le compte à rebours -->
-  <div id="countdown"></div>
-  <!-- Canvas pour le rendu du jeu -->
-  <canvas id="myCanvas" width="480" height="320" style="display:none;"></canvas>
-  <!-- Message affiché à la fin du jeu -->
-  <div id="endMessage"></div>
-  <!-- Bouton pour recommencer le jeu -->
-  <button id="restartBtn">Recommencer</button>
 
-  <script>
-    // Récupération des éléments HTML
-    const canvas = document.getElementById("myCanvas");
-    const ctx = canvas.getContext("2d"); // Contexte 2D pour dessiner
-    const startBtn = document.getElementById("startBtn");
-    const restartBtn = document.getElementById("restartBtn");
-    const endMessage = document.getElementById("endMessage");
-    const countdownEl = document.getElementById("countdown");
+    <div id="toast"><i class="fa-solid fa-check"></i> Email copié !</div>
 
-    // Variables du jeu
-    let ballRadius, x, y, dx, dy, paddleHeight, paddleWidth, paddleX;
-    let rightPressed, leftPressed;
-    let brickRowCount, brickColumnCount, brickWidth, brickHeight;
-    let brickPadding, brickOffsetTop, brickOffsetLeft;
-    let score, lives, gameRunning, bricks;
+    <div class="fab" onclick="window.print()">
+        <i class="fa-solid fa-file-pdf"></i> Enregistrer PDF
+    </div>
 
-    // Initialisation des variables du jeu
-    function initGame() {
-      ballRadius = 10; // Rayon de la balle
-      x = canvas.width / 2; // Position initiale x de la balle
-      y = canvas.height - 30; // Position initiale y de la balle
-      dx = 2; // Vitesse horizontale
-      dy = -2; // Vitesse verticale
-      paddleHeight = 10; // Hauteur de la raquette
-      paddleWidth = 75; // Largeur de la raquette
-      paddleX = (canvas.width - paddleWidth) / 2; // Position initiale de la raquette
-      rightPressed = false; // État touche droite
-      leftPressed = false; // État touche gauche
-      brickRowCount = 5; // Nombre de colonnes de briques
-      brickColumnCount = 3; // Nombre de lignes de briques
-      brickWidth = 75; // Largeur d'une brique
-      brickHeight = 20; // Hauteur d'une brique
-      brickPadding = 10; // Espacement entre briques
-      brickOffsetTop = 30; // Décalage haut des briques
-      brickOffsetLeft = 30; // Décalage gauche des briques
-      score = 0; // Score initial
-      lives = 3; // Nombre de vies
-      gameRunning = true; // État du jeu
+    <div class="cv-wrapper">
+        
+        <header class="header-card">
+            <div class="header-bg"></div>
+            <div class="profile-container">
+                <img src="PHOTO CV-35x45.jpg" alt="Mamadou Diga Ba" class="profile-img">
+            </div>
+            
+            <div class="header-info">
+                <h1>Mamadou Diga Ba</h1>
+                <div class="typing-wrapper">
+                    <span id="typewriter"></span><span class="cursor"></span>
+                </div>
+                <p class="summary-text">
+                    <strong>Profil Digital & Data.</strong> Étudiant en Master Humanités Numériques, je combine expertise technique (Tracking, Dashboarding) et vision marketing. Prêt à accompagner <strong>20 Minutes</strong> dans l'optimisation de ses performances digitales et l'engagement lecteur.
+                </p>
+            </div>
+        </header>
 
-      // Initialisation du tableau de briques
-      bricks = [];
-      for (let c = 0; c < brickColumnCount; c++) {
-        bricks[c] = [];
-        for (let r = 0; r < brickRowCount; r++) {
-          bricks[c][r] = { x: 0, y: 0, status: 1 }; // Status 1 = brique active
-        }
-      }
+        <div class="col-left">
+            <div class="card">
+                <div class="section-title"><i class="fa-solid fa-briefcase"></i> Expériences Professionnelles</div>
 
-      // Réinitialisation des éléments d'interface
-      endMessage.style.display = "none";
-      restartBtn.style.display = "none";
-    }
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="job-head">
+                        <div>
+                            <div class="job-title">Consultant Junior - Data & Suivi Projets (CDI)</div>
+                            <div class="job-company">SolutronIQ</div>
+                        </div>
+                        <div class="job-date">Sept 2024 - Présent</div>
+                    </div>
+                    <ul class="job-desc">
+                        <li><strong>Dashboarding & KPI :</strong> Conception de tableaux de bord. Recueil des besoins pour créer des outils de pilotage adaptés.</li>
+                        <li><strong>Fiabilité des Données :</strong> Optimisation des bases SQL et gestion des flux Azure pour garantir un tracking fiable.</li>
+                        <li><strong>Gestion de Projet :</strong> Coordination technique et suivi des mises en production.</li>
+                    </ul>
+                </div>
 
-    // Gestion des événements clavier et souris
-    document.addEventListener("keydown", keyDownHandler, false);
-    document.addEventListener("keyup", keyUpHandler, false);
-    document.addEventListener("mousemove", mouseMoveHandler, false);
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="job-head">
+                        <div>
+                            <div class="job-title">Assistant Chef de Projet Data (Stage)</div>
+                            <div class="job-company">SolutronIQ</div>
+                        </div>
+                        <div class="job-date">Mars 2024 - Sept 2024</div>
+                    </div>
+                    <ul class="job-desc">
+                        <li><strong>Analyse de Performance :</strong> Création de Dashboards interactifs pour visualiser l'activité en temps réel.</li>
+                        <li><strong>Automatisation :</strong> Scripts Python pour automatiser le reporting et les newsletters internes.</li>
+                    </ul>
+                </div>
 
-    // Détection des touches pressées
-    function keyDownHandler(e) {
-      if (e.code == "ArrowRight") rightPressed = true;
-      else if (e.code == "ArrowLeft") leftPressed = true;
-    }
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="job-head">
+                        <div>
+                            <div class="job-title">Chargé de Projet Digital & Engagement (Stage)</div>
+                            <div class="job-company">Tolbi (Start-up)</div>
+                        </div>
+                        <div class="job-date">Sept 2023 - Nov 2023</div>
+                    </div>
+                    <ul class="job-desc">
+                        <li><strong>Expérience Utilisateur (UX) :</strong> Analyse des parcours et actions pour augmenter l'engagement web.</li>
+                        <li><strong>Coordination Agile :</strong> Collaboration avec les développeurs et le Product Owner.</li>
+                    </ul>
+                </div>
+            </div>
 
-    // Détection des touches relâchées
-    function keyUpHandler(e) {
-      if (e.code == "ArrowRight") rightPressed = false;
-      else if (e.code == "ArrowLeft") leftPressed = false;
-    }
+            <div class="card">
+                <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> Formation</div>
+                <div class="edu-item">
+                    <span class="edu-degree">Master Humanités Numériques - M1</span>
+                    <span class="edu-school">Université Paris 8 Saint-Denis | 2025 - 2026</span>
+                    <div style="font-size: 0.9em; color: var(--text-light); margin-top: 5px;">Spécialisation : Data, Culture Web et Enjeux Numériques.</div>
+                </div>
+                <div class="edu-item">
+                    <span class="edu-degree">Bachelor Innovation & Technologies Numériques</span>
+                    <span class="edu-school">Institut Mines-Télécom (IMT) | 2021 - 2024</span>
+                    <div style="font-size: 0.9em; color: var(--text-light); margin-top: 5px;">Mention Très Bien.</div>
+                </div>
+            </div>
+        </div>
 
-    // Déplacement de la raquette avec la souris
-    function mouseMoveHandler(e) {
-      const relativeX = e.clientX - canvas.offsetLeft;
-      if (relativeX > 0 && relativeX < canvas.width) {
-        paddleX = relativeX - paddleWidth / 2;
-      }
-    }
+        <div class="col-right">
+            <div class="card">
+                <div class="section-title"><i class="fa-solid fa-address-card"></i> Contact</div>
+                <div class="contact-row">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span class="contact-text">77 bis rue Victor Hugo, 60100 Creil</span>
+                </div>
+                <div class="contact-row" onclick="copyEmail()">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span class="contact-text" style="font-size: 0.88em;">ba.mamadoudiga@hotmail.com</span>
+                </div>
+                <div class="contact-row">
+                    <i class="fa-solid fa-phone"></i>
+                    <span class="contact-text">+33 6 98 72 31 41</span>
+                </div>
+            </div>
 
-    // Détection des collisions avec les briques
-    function collisionDetection() {
-      for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
-          const b = bricks[c][r];
-          if (b.status == 1) {
-            if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
-              dy = -dy; // Inverser la direction verticale
-              b.status = 0; // Désactiver la brique
-              score++; // Augmenter le score
-              if (score == brickRowCount * brickColumnCount) {
-                endMessage.textContent = "🎉 Bravo, tu as gagné !";
-                endGame(); // Fin du jeu
-              }
+            <div class="card">
+                <div class="section-title"><i class="fa-solid fa-code"></i> Compétences</div>
+                <div class="skill-group">
+                    <span class="skill-label">Analytics & Dashboarding</span>
+                    <div class="tag-cloud">
+                        <span class="tag tech" style="animation-delay: 0.1s">Google Looker Studio</span>
+                        <span class="tag tech" style="animation-delay: 0.2s">Google Analytics</span>
+                        <span class="tag tech" style="animation-delay: 0.3s">SQL / MySQL</span>
+                        <span class="tag tech" style="animation-delay: 0.4s">Excel / Power BI</span>
+                    </div>
+                </div>
+                <div class="skill-group">
+                    <span class="skill-label">Programmation</span>
+                    <div class="tag-cloud">
+                        <span class="tag" style="animation-delay: 0.5s">Python / Django</span>
+                        <span class="tag" style="animation-delay: 0.6s">HTML / CSS</span>
+                        <span class="tag" style="animation-delay: 0.7s">PHP / R</span>
+                    </div>
+                </div>
+                <div class="skill-group">
+                    <span class="skill-label">DevOps & Outils</span>
+                    <div class="tag-cloud">
+                        <span class="tag" style="animation-delay: 0.8s">Git / GitHub</span>
+                        <span class="tag" style="animation-delay: 0.9s">Docker / Linux</span>
+                        <span class="tag" style="animation-delay: 1.0s">Jira / Notion</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title"><i class="fa-solid fa-users"></i> Soft Skills</div>
+                <div class="soft-list">
+                    <div class="soft-skill" style="animation-delay: 0.2s"><i class="fa-solid fa-check-circle"></i> Initiative</div>
+                    <div class="soft-skill" style="animation-delay: 0.3s"><i class="fa-solid fa-check-circle"></i> Travail d'Équipe</div>
+                    <div class="soft-skill" style="animation-delay: 0.4s"><i class="fa-solid fa-check-circle"></i> Gestion de Projet</div>
+                    <div class="soft-skill" style="animation-delay: 0.5s"><i class="fa-solid fa-check-circle"></i> Adaptabilité</div>
+                    <div class="soft-skill" style="animation-delay: 0.6s"><i class="fa-solid fa-check-circle"></i> Veille Digitale</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title"><i class="fa-solid fa-language"></i> Langues</div>
+                <div style="margin-bottom: 8px;"><strong>Français :</strong> Courant</div>
+                <div><strong>Anglais :</strong> Professionnel</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Typing Animation
+        const text = "Assistant Chef de Projet Digital | Data";
+        const container = document.getElementById("typewriter");
+        let i = 0;
+        function typeWriter() {
+            if (i < text.length) {
+                container.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
             }
-          }
         }
-      }
-    }
 
-    // Dessiner la balle
-    function drawBall() {
-      ctx.beginPath();
-      ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-      ctx.fillStyle = "#0095DD";
-      ctx.fill();
-      ctx.closePath();
-    }
+        // Scroll Reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.card').forEach(card => {
+            observer.observe(card);
+        });
 
-    // Dessiner la raquette
-    function drawPaddle() {
-      ctx.beginPath();
-      ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-      ctx.fillStyle = "#0095DD";
-      ctx.fill();
-      ctx.closePath();
-    }
-
-    // Dessiner les briques
-    function drawBricks() {
-      for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
-          if (bricks[c][r].status == 1) {
-            const brickX = (r * (brickWidth + brickPadding)) + brickOffsetLeft;
-            const brickY = (c * (brickHeight + brickPadding)) + brickOffsetTop;
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
-            ctx.beginPath();
-            ctx.rect(brickX, brickY, brickWidth, brickHeight);
-            ctx.fillStyle = "#0095DD";
-            ctx.fill();
-            ctx.closePath();
-          }
+        // Copy Email Toast
+        function copyEmail() {
+            const email = 'ba.mamadoudiga@hotmail.com';
+            navigator.clipboard.writeText(email).then(() => {
+                const toast = document.getElementById("toast");
+                toast.className = "show";
+                setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+            });
         }
-      }
-    }
+        
+        // Suppression du script de rotation de photo
+        // Les lignes pour la photo sont enlevées ici
+        // const header = document.querySelector('.header-card');
+        // const photo = document.querySelector('.profile-container');
+        // header.addEventListener('mousemove', (e) => { ... });
+        // header.addEventListener('mouseleave', () => { ... });
 
-    // Afficher le score
-    function drawScore() {
-      ctx.font = "16px Arial";
-      ctx.fillStyle = "#0095DD";
-      ctx.fillText("Score : " + score, 8, 20);
-    }
-
-    // Afficher les vies
-    function drawLives() {
-      ctx.font = "16px Arial";
-      ctx.fillStyle = "#0095DD";
-      ctx.fillText("Vies : " + lives, canvas.width - 65, 20);
-    }
-
-    // Boucle principale du jeu
-    function draw() {
-      if (!gameRunning) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // Effacer le canvas
-      drawBricks();
-      drawBall();
-      drawPaddle();
-      drawScore();
-      drawLives();
-      collisionDetection();
-
-      // Gestion des collisions avec les murs
-      if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) dx = -dx;
-      if (y + dy < ballRadius) dy = -dy;
-      else if (y + dy > canvas.height - ballRadius) {
-        if (x > paddleX && x < paddleX + paddleWidth) dy = -dy; // Rebond sur la raquette
-        else {
-          lives--; // Perdre une vie
-          if (!lives) {
-            endMessage.textContent = "💀 Partie terminée !";
-            endGame();
-          } else {
-            x = canvas.width / 2;
-            y = canvas.height - 30;
-            dx = 2;
-            dy = -2;
-            paddleX = (canvas.width - paddleWidth) / 2;
-          }
-        }
-      }
-
-      // Déplacement de la raquette
-      if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 7;
-      else if (leftPressed && paddleX > 0) paddleX -= 7;
-
-      // Mise à jour de la position de la balle
-      x += dx;
-      y += dy;
-      requestAnimationFrame(draw); // Boucle d'animation
-    }
-
-    // Fin du jeu
-    function endGame() {
-      gameRunning = false;
-      endMessage.style.display = "block";
-      restartBtn.style.display = "inline-block";
-    }
-
-    // Compte à rebours avant le démarrage
-    function startCountdown(callback) {
-      let count = 3;
-      countdownEl.style.display = "block";
-      countdownEl.textContent = count;
-
-      const interval = setInterval(() => {
-        count--;
-        if (count > 0) {
-          countdownEl.textContent = count;
-        } else if (count === 0) {
-          countdownEl.textContent = "Go !";
-        } else {
-          clearInterval(interval);
-          countdownEl.style.display = "none";
-          callback();
-        }
-      }, 1000);
-    }
-
-    // Événement pour démarrer le jeu
-    startBtn.addEventListener("click", () => {
-      startBtn.style.display = "none";
-      canvas.style.display = "block";
-      startCountdown(() => {
-        initGame();
-        draw();
-      });
-    });
-
-    // Événement pour recommencer
-    restartBtn.addEventListener("click", () => {
-      initGame();
-      draw();
-    });
-  </script>
+        window.onload = function() {
+            setTimeout(typeWriter, 500);
+        };
+    </script>
 </body>
 </html>
+```http://googleusercontent.com/image_generation_content/0
